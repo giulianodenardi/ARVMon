@@ -18,7 +18,7 @@ AVRMon is intentionally small. Rather than becoming a full debugger or developme
 - **RST**: Hardware reset via Watchdog Timer (WDT).
 
 ## Project Structure
-
+```text
 AVRMon/
 ├── docs/
 │    └── roadmap.md
@@ -28,6 +28,6 @@ AVRMon/
   	├── main.cpp
   	├── parser.cpp
   	└── commands.cpp
-
+```
 ## How to Use
 Connect the Arduino via Serial at 115200 baud (NL + CR) and send commands directly from the terminal.
