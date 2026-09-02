@@ -20,6 +20,11 @@ AVRMon is intentionally small. Rather than becoming a full debugger or developme
 ## Project Structure
 ```text
 AVRMon/
+│
+├── ARVMon.ino
+├── config.h
+├── wdt.h
+│
 ├── docs/
 │    └── roadmap.md
 ├── include/
