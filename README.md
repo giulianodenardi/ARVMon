@@ -25,14 +25,8 @@ AVRMon/
 ├── config.h
 ├── wdt.h
 │
-├── docs/
-│    └── roadmap.md 
-└── src/
-  	├── main.cpp
-  	├── parser.cpp
-  	└── commands.cpp
-    └── avrmon.h
-
+└── docs/
+    └── roadmap.md 
 ```
 ## How to Use
 Connect the Arduino via Serial at 115200 baud (NL + CR) and send commands directly from the terminal.
