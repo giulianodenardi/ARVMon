@@ -1,19 +1,28 @@
 # AVRMon Roadmap
 
-## Phase 1: Core Foundation (v0.1) - [Current]
-- [x] Individual byte read and write (`R`, `W`).
-- [x] Formatted SRAM memory dump (`D`).
-- [x] MCU reset via Watchdog (`RST`).
-- [x] Refactoring of the monolithic structure into C/C++ modules (`include/`, `src/`).
+## v0.1 - Proof of Concept (Legacy)
+- [x] Basic Serial REPL (38400 baud)
+- [x] SRAM/SFR single-byte read (`R`) and write (`W`)
+- [x] EEPROM single-byte read (`RE`) and write (`WE`)
+- [x] Basic Intel HEX record parsing for RAM loading
+- [x] Soft reset command (`RST`)
 
-## Phase 2: Memory & Execution
-- [ ] Support for code execution from a memory address (`G <addr>`).
+---
 
-- [ ] Flash/EEPROM memory read/write.
+## v0.2 - Stable Core & Clean Scope (Current)
+- [x] Refactored command interpreter with safe string parsing and semicolon chaining (`cmd1; cmd2`)
+- [x] SRAM memory dump (`D <addr> [len]`)
+- [x] Intel HEX parser focused strictly on RAM space
+- [x] Fully translated code, comments, and CLI outputs to English
+- [x] Scope reduction and deprecation:
+  - **Removed Flash SPM operations (`WF`, `EF`, `DF`):** Dropped due to hardware SPM lock restrictions in stock ATmega328P bootloaders/fuses.
+  - **Removed Flash dynamic jump (`G`):** Removed code execution in Flash to maintain code stability and portability without requiring custom ISP flashing.
 
-- [ ] Direct Intel HEX file parsing via serial.
+---
 
-## Phase 3: Hardware Interface & Tooling
-- [ ] I/O register read/write via aliases (e.g., `PINB`, `PORTD`).
-
-- [ ] Python CLI interface for test automation on the host.
+## v0.3 - ESP32 Fork (ESPMon)
+- [ ] Port codebase to ESP32 architecture (32-bit address space)
+- [ ] Expand memory inspection commands to support 32-bit addresses (`uint32_t`)
+- [ ] Implement RAM dynamic code execution (`G`) using ESP32 executable heap (`MALLOC_CAP_EXEC`)
+- [ ] Non-Volatile Storage (NVS) read/write commands as EEPROM alternative
+- [ ] Multi-core memory and peripheral inspection capabilities
