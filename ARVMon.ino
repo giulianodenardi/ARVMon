@@ -46,6 +46,7 @@ void printHelp() {
   Serial.println(F("  R <addr_hex>          -> Read SRAM/SFR byte"));
   Serial.println(F("  W <addr_hex> <val_hex>-> Write SRAM/SFR byte"));
   Serial.println(F("  D <addr_hex> [len_hex]-> Dump SRAM memory block"));
+  Serial.println(F("  DF <addr_hex> [len_h] -> Dump Flash (PROGMEM) block")); // <-- Adicionado!
   Serial.println(F("  RE <addr_hex>         -> Read EEPROM byte"));
   Serial.println(F("  WE <addr_hex> <val_h> -> Write EEPROM byte"));
   Serial.println(F("  :100100...            -> Intel HEX Record (RAM loader)"));
@@ -138,6 +139,50 @@ void executeSingleCommand(char *line) {
       Serial.println();
     }
   }
+
+  // PROGMEM Memory Dump
+  else if (strncasecmp(line, "DF", 2) == 0) {
+    int parsed = sscanf(line, "%*s %15s %15s", arg1, arg2);
+    if (parsed >= 1) {
+      uint16_t addr = parseHex(arg1);
+      uint16_t dumpLen = (parsed == 2) ? parseHex(arg2) : 0x10;
+      if (dumpLen == 0) dumpLen = 0x10;
+      if (dumpLen > 0x0100) dumpLen = 0x0100;
+
+      for (uint16_t i = 0; i < dumpLen; i += 8) {
+        printHex16(addr + i);
+        Serial.print(F(": "));
+
+        // 1. Print Hex Bytes lidos da FLASH
+        for (uint8_t j = 0; j < 8; j++) {
+          if (i + j < dumpLen) {
+            uint8_t b = pgm_read_byte((const void *)(addr + i + j));
+            printHex8(b);
+            Serial.print(F(" "));
+          } else {
+            Serial.print(F("     ")); 
+          }
+        }
+
+        Serial.print(F(" |"));
+
+        // 2. Print ASCII representation
+        for (uint8_t j = 0; j < 8; j++) {
+          if (i + j < dumpLen) {
+            uint8_t b = pgm_read_byte((const void *)(addr + i + j));
+            if (b >= 32 && b <= 126) {
+              Serial.print((char)b);
+            } else {
+              Serial.print(F("."));
+            }
+          }
+        }
+
+        Serial.println(F("|"));
+      }
+    }
+  }
+
   // SRAM/SFR Write Byte
   else if (strncasecmp(line, "W ", 2) == 0 || strcasecmp(line, "W") == 0) {
     if (sscanf(line, "%*s %15s %15s", arg1, arg2) == 2) {
@@ -163,7 +208,8 @@ void executeSingleCommand(char *line) {
       Serial.println();
     }
   }
-  // SRAM Memory Dump
+
+// SRAM Memory Dump
   else if (strncasecmp(line, "D ", 2) == 0 || strcasecmp(line, "D") == 0) {
     int parsed = sscanf(line, "%*s %15s %15s", arg1, arg2);
     if (parsed >= 1) {
@@ -175,16 +221,36 @@ void executeSingleCommand(char *line) {
       for (uint16_t i = 0; i < dumpLen; i += 8) {
         printHex16(addr + i);
         Serial.print(F(": "));
+
+        // 1. Print Hex Bytes
         for (uint8_t j = 0; j < 8; j++) {
           if (i + j < dumpLen) {
             printHex8(*(volatile uint8_t *)(addr + i + j));
             Serial.print(F(" "));
+          } else {
+            // Padding de espaçamento caso a última linha não complete 8 bytes
+            Serial.print(F("     ")); 
           }
         }
-        Serial.println();
+
+        Serial.print(F(" |"));
+
+        // 2. Print ASCII representation
+        for (uint8_t j = 0; j < 8; j++) {
+          if (i + j < dumpLen) {
+            uint8_t b = *(volatile uint8_t *)(addr + i + j);
+            if (b >= 32 && b <= 126) {
+              Serial.print((char)b);
+            } else {
+              Serial.print(F("."));
+            }
+          }
+        }
+
+        Serial.println(F("|"));
       }
     }
-  }
+  }  
   // Unknown Command Handler
   else {
     Serial.print(F("NOPE: "));
