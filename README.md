@@ -202,5 +202,3 @@ MIT License – see [LICENSE](LICENSE).
 
 - Inspired by classic machine monitors (Woz Monitor and similar early systems).
 - Flash write support made possible by [MCUdude/MiniCore](https://github.com/MCUdude/MiniCore) and its Flash library.
-```
-
