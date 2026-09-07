@@ -126,7 +126,7 @@ Usage examples:
 ```bash
 serial 38400          # → /dev/ttyUSB0 at 38400
 serial 38400 ACM      # → /dev/ttyACM0 at 38400
-serial 38400 usb      # → /dev/ttyUSB0 at 38400
+serial 115200 usb     # → /dev/ttyUSB0 at 115200
 ```
 
 ---
@@ -150,9 +150,13 @@ serial 38400 usb      # → /dev/ttyUSB0 at 38400
 3. Select the board:
 
    - **Tools → Board → MiniCore → ATmega328**
-   - Clock: **16 MHz external**
-   - Bootloader: **Yes (UART0)**
-   - Variant: **328P**
+   - Baud rate: "Default"
+   - BOD: "BOD 2.7V"
+   - Bootloader: "Yes (UARTO)"
+   - Clock: "External 16 MHz"
+   - EEPROM: "EEPROM retained"
+   - Compiler LTO: "LTO enabled"
+   - Variant: "328"
    - Port: your serial port (`/dev/ttyACM0` or `/dev/ttyUSB0`)
 
 4. Click **Upload**.
@@ -185,40 +189,6 @@ serial 38400 usb      # → /dev/ttyUSB0 at 38400
    ```
 
 5. Exit picocom with `Ctrl+A` then `Ctrl+X`.
-
----
-
-## Roadmap
-
-### v0.1 – Proof of Concept (Legacy)
-- [x] Basic Serial REPL (38400 baud)
-- [x] SRAM/SFR single-byte read (`R`) and write (`W`)
-- [x] EEPROM single-byte read (`RE`) and write (`WE`)
-- [x] Basic Intel HEX record parsing for RAM loading
-- [x] Soft reset command (`RST`)
-
-### v0.2 – Stable Core & Clean Scope
-- [x] Refactored command interpreter with safe string parsing and semicolon chaining
-- [x] SRAM memory dump (`D`)
-- [x] Intel HEX parser focused on RAM
-- [x] Fully translated code, comments, and CLI outputs to English
-- [x] Scope reduction for stock bootloader compatibility (Flash SPM operations temporarily removed)
-
-### v0.3 – Stock Bootloader Attempt (no MiniCore)
-- [x] Last attempt to keep full functionality (including Flash write) while staying on the stock Arduino bootloader
-- [x] Confirmed hardware SPM lock restrictions on stock Optiboot / official Arduino bootloaders
-- [x] Decision to move to MiniCore for unrestricted Flash access
-
-### v0.4 – MiniCore / Native SPM (Current)
-- [x] Switched to MiniCore core + Flash library
-- [x] Re-enabled Flash dump (`DF`) and Flash write (`WF`)
-- [x] Clean integration with Optiboot/Urboot SPM API
-- [x] Updated version string and help text
-
-### Future ideas
-- [ ] More compact command syntax / interactive mode improvements
-- [ ] Optional support for other AVR devices (ATmega168, ATmega1284, etc.)
-- [ ] Small utility scripts for bulk Intel HEX loading
 
 ---
 
