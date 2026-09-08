@@ -9,17 +9,19 @@
 #include <avr/pgmspace.h>
 #include <avr/boot.h>
 
-// MiniCore's native library for unrestricted access in Flash.
+// MiniCore's native library for unrestricted access to Flash
 #include <Flash.h>
 
 #define AVRMON_VERSION "v0.4-MiniCore"
 #define AVRMON_BAUD_RATE 38400
 
-
 uint8_t user_ram[256];
 uint8_t ram_buffer[SPM_PAGESIZE];
 
-#define NUMBER_OF_PAGES 8   // quantas páginas você quer poder escrever
+// Forces the creation of the .eep file and eliminates the warning
+const uint8_t eeprom_dummy EEMEM __attribute__((used)) = 0xFF;
+
+#define NUMBER_OF_PAGES 8
 const uint8_t flash_space[SPM_PAGESIZE * NUMBER_OF_PAGES] 
   __attribute__((aligned(SPM_PAGESIZE))) PROGMEM = {};
 
@@ -65,6 +67,14 @@ void printHelp() {
   Serial.println(F("  RST                   -> Soft Reset MCU"));
 }
 
+void setup() {
+  // Reads the dummy byte just to ensure the link in the final code
+  (void)eeprom_read_byte((const uint8_t *)&eeprom_dummy);
+
+  Serial.begin(AVRMON_BAUD_RATE);
+  printHelp();
+  Serial.print(F("\n@ "));
+}
 
 // Write function to Flash using the actual Flash.h syntax of MiniCore
 void writeFlashByte(uint16_t addr, uint8_t val) {
@@ -72,7 +82,7 @@ void writeFlashByte(uint16_t addr, uint8_t val) {
   // (only works if addr is within the flash_space you allocated)
   uint16_t pageNumber = (addr - (uint16_t)flash_space) / SPM_PAGESIZE;
   
-  // 1. Reads the entire page into the buffer.
+  // 1. Reads the entire page into the buffer
   flash.fetch_page(pageNumber);
   
   // 2. Modify the desired byte
@@ -205,12 +215,6 @@ void processCommandLine(char *line) {
     executeSingleCommand(token);
     token = strtok(NULL, ";");
   }
-}
-
-void setup() {
-  Serial.begin(AVRMON_BAUD_RATE);
-  printHelp();
-  Serial.print(F("\n@ "));
 }
 
 void loop() {
