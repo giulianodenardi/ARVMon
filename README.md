@@ -10,6 +10,8 @@ AVRMon is intentionally small. It is not a full debugger or development environm
 
 **Current version: v0.4 (MiniCore / Optiboot SPM)**
 
+No arduino? No problem. See [PicSimLab Setup](docs/PicSimLab%20Setup.md)
+
 ---
 
 ## Features (v0.4)
